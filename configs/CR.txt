@@ -1,0 +1,144 @@
+ISP2#show running-config
+Building configuration...
+
+Current configuration : 1420 bytes
+!
+! Last configuration change at 23:53:11 UTC Fri Nov 6 2026
+!
+upgrade fpd auto
+version 15.0
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname ISP2
+!
+boot-start-marker
+boot-end-marker
+!
+!
+no aaa new-model
+ip source-route
+no ip icmp rate-limit unreachable
+ip cef
+!
+!
+!
+!
+no ip domain lookup
+no ipv6 cef
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+ip tcp synwait-time 5
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.200.1 255.255.255.0
+!
+interface FastEthernet0/0
+ no ip address
+ shutdown
+ duplex half
+!
+interface Serial1/0
+ ip address 172.16.1.2 255.255.255.0
+ serial restart-delay 0
+!
+interface Serial1/1
+ no ip address
+ shutdown
+ serial restart-delay 0
+!
+interface Serial1/2
+ no ip address
+ shutdown
+ serial restart-delay 0
+!
+interface Serial1/3
+ no ip address
+ shutdown
+ serial restart-delay 0
+!
+router bgp 200
+ no synchronization
+ bgp log-neighbor-changes
+ network 192.168.200.0
+ neighbor 172.16.1.1 remote-as 100
+ no auto-summary
+!
+ip forward-protocol nd
+no ip http server
+no ip http secure-server
+!
+!
+!
+no cdp log mismatch duplex
+!
+!
+!
+control-plane
+!
+!
+mgcp fax t38 ecm
+mgcp behavior g729-variants static-pt
+!
+!
+!
+gatekeeper
+ shutdown
+!
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ stopbits 1
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ stopbits 1
+line vty 0 4
+ login
+!
+end
+
+ISP2#show ip interface brief
+Interface                  IP-Address      OK? Method Status                Protocol
+FastEthernet0/0            unassigned      YES unset  administratively down down
+Serial1/0                  172.16.1.2      YES manual up                    up
+Serial1/1                  unassigned      YES unset  administratively down down
+Serial1/2                  unassigned      YES unset  administratively down down
+Serial1/3                  unassigned      YES unset  administratively down down
+Loopback0                  192.168.200.1   YES manual up                    up
+ISP2#show ip route
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, + - replicated route
+
+Gateway of last resort is not set
+
+      172.16.0.0/16 is variably subnetted, 2 subnets, 2 masks
+C        172.16.1.0/24 is directly connected, Serial1/0
+L        172.16.1.2/32 is directly connected, Serial1/0
+B     192.168.1.0/24 [20/0] via 172.16.1.1, 00:09:11
+B     192.168.100.0/24 [20/0] via 172.16.1.1, 00:09:11
+      192.168.200.0/24 is variably subnetted, 2 subnets, 2 masks
+C        192.168.200.0/24 is directly connected, Loopback0
+L        192.168.200.1/32 is directly connected, Loopback0
